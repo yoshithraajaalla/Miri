@@ -8,21 +8,9 @@ import pandas as pd
 
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 load_dotenv()
-
-# App config
-st.set_page_config(page_title="TalentScout - Miri", page_icon="🔶",initial_sidebar_state="collapsed")
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
 
 if "user_data_submitted" in st.session_state and st.session_state.user_data_submitted:
     user_name = st.session_state.user_data.get("Full Name", "Candidate")
@@ -40,6 +28,8 @@ if "user_data_submitted" in st.session_state and st.session_state.user_data_subm
         st.session_state.submission_submitted = False
     if "final_data" not in st.session_state:
         st.session_state.final_data = pd.DataFrame([st.session_state.user_data])
+    if "data_saved" not in st.session_state:
+        st.session_state.data_saved = False
 
     # --- Check if GOOGLE_API_KEY is set ---
     if "GOOGLE_API_KEY" not in os.environ:
@@ -100,5 +90,27 @@ if "user_data_submitted" in st.session_state and st.session_state.user_data_subm
                 full_response += chunk
                 response_container.write(full_response)
             st.session_state.chat_history.append(AIMessage(content=full_response))
+
+            # Check if the final message from Miri was just sent
+            if "Your responses have been recorded. We'll get back to you via email. You may close the tab now." in full_response and not st.session_state.data_saved:
+                timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S_UTC")
+                filename = f"candidate_data_{timestamp}.csv"
+                df = pd.DataFrame([st.session_state.user_data])
+                try:
+                    if os.path.exists("candidate_data.csv"):
+                        existing_df = pd.read_csv("candidate_data.csv")
+                        updated_df = pd.concat([existing_df, df], ignore_index=True)
+                        updated_df.to_csv("candidate_data.csv", index=False)
+                    else:
+                        df.to_csv("candidate_data.csv", index=False)
+                    st.session_state.data_saved = True
+                    st.success(f"Candidate data saved to candidate_data.csv")
+                except Exception as e:
+                    st.error(f"Error saving data to CSV: {e}")
+
 else:
     st.warning("Please submit your information on the previous page first.")
+
+# --- GDPR Compliance Note ---
+st.markdown("---")
+st.markdown("**GDPR Compliance Note:** The candidate data collected here is stored in a CSV file for recruitment purposes as per the consent provided. For a production application, ensure secure storage, data encryption, and mechanisms to handle data access, rectification, and deletion requests according to GDPR guidelines.")
