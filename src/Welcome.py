@@ -32,13 +32,13 @@ if "gdpr_consent" not in st.session_state:
 if not st.session_state.gdpr_consent:
     st.subheader("Data Privacy and Consent")
     st.markdown("""
-    Before proceeding, please read the following disclaimer regarding your data:
+        Data Privacy Notice
 
-    We are GDPR compliant and are committed to protecting your personal data.
-    By using this chatbot, you consent to the use of your data for recruitment purposes only.
-    Your information will be stored securely and will only be used for evaluating your suitability for potential job opportunities.
+        Your privacy matters to us. Before continuing, please review how we handle your information:
 
-    For more information about GDPR, please refer to [https://gdpr.eu/](https://gdpr.eu/).
+        We fully comply with GDPR regulations and prioritize the protection of your personal data. By engaging with this chatbot, you provide consent for us to process your information exclusively for recruitment evaluation. Your data will be stored using industry-standard security measures and used solely to assess your fit for relevant positions.
+
+        For complete details on your rights under GDPR, visit [https://gdpr.eu/](https://gdpr.eu/)
     """)
     if st.button("I Agree"):
         st.session_state.gdpr_consent = True
