@@ -1,8 +1,8 @@
-# TalentScout Hiring Assistant Chatbot
+# MIRI - Hiring Assistant Chatbot
 
 ## 1. Project Overview
 
-The TalentScout Hiring Assistant is a Streamlit-based chatbot designed to streamline the initial candidate screening process for TalentScout, a (fictional) recruitment agency specializing in technology placements. This chatbot, named Miri, interacts with candidates to gather essential information, including their background and technical skills, and assesses their proficiency by asking relevant technical questions. The goal is to automate the early stages of recruitment, ensuring a more efficient and standardized evaluation of potential hires.
+Miri is a Streamlit-based chatbot designed to streamline the initial candidate screening process for TalentScout, a (fictional) recruitment agency specializing in technology placements. This chatbot interacts with candidates to gather essential information, including their background and technical skills, and assesses their proficiency by asking relevant technical questions. The goal is to automate the early stages of recruitment, ensuring a more efficient and standardized evaluation of potential hires.
 
 Deployed using [Streamlit Commmunity Cloud](https://streamlit.io/cloud). Check it out [here](https://miribot.streamlit.app/).
 
