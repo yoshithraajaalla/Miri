@@ -179,7 +179,7 @@ if st.session_state.information_collected:
             st.error("GOOGLE_API_KEY is not set. Please set it as an environment variable.")
             st.stop()  # Stop the app if the API key is missing
         try:
-            st.session_state.llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash', google_api_key=os.environ["GOOGLE_API_KEY"])
+            st.session_state.llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash', google_api_key=st.secrets["GOOGLE_API_KEY"])
         except Exception as e:
             st.error(f"Error initializing Gemini LLM: {e}")
             st.stop()

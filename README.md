@@ -47,9 +47,9 @@ To set up and run the Hiring Assistant chatbot locally, follow these steps:
 
     * Obtain a Google API key for the Gemini API. See <https://ai.google.dev/> for instructions.
 
-    * Create a `.env` file in the root directory of the project.
+    * Create a `secrets.toml` file in the root directory of the project.
 
-    * Add your API key to the `.env` file:
+    * Add your API key to the `secrets.toml` file:
 
         ```
         GOOGLE_API_KEY="YOUR_API_KEY"
@@ -126,8 +126,6 @@ To set up and run the Hiring Assistant chatbot locally, follow these steps:
     * Langchain: For LLM orchestration.
 
     * Langchain-Google-GenAI: For using the Gemini LLM.
-
-    * python-dotenv: For managing environment variables (API key).
 
     * PyPDF2: For parsing PDF files (for resume upload).
 
