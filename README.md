@@ -4,7 +4,9 @@
 
 The TalentScout Hiring Assistant is a Streamlit-based chatbot designed to streamline the initial candidate screening process for TalentScout, a (fictional) recruitment agency specializing in technology placements. This chatbot, named Miri, interacts with candidates to gather essential information, including their background and technical skills, and assesses their proficiency by asking relevant technical questions. The goal is to automate the early stages of recruitment, ensuring a more efficient and standardized evaluation of potential hires.
 
-## 2. Installation Instructions
+Deployed using [Streamlit Commmunity Cloud](https://streamlit.io/cloud). Check it out [here](https://miribot.streamlit.app/).
+
+## 2. Local Installation Instructions
 
 To set up and run the Hiring Assistant chatbot locally, follow these steps:
 
@@ -230,3 +232,25 @@ The prompts used in this application are crucial for guiding the LLM to generate
 * **Challenge 4:** Extracting information from resumes with varying formats.
 
     * **Solution:** Used both PyPDF2 and docx to handle common resume formats. Regular expressions were used to extract name, email, and phone number. The extraction logic handles cases where some information might be missing from the resume.
+
+## 7. Opportunities
+
+This project provides a foundation for building an AI-powered hiring assistant, but there are several areas for future development and improvement:
+
+1.  **Resume Data Extraction:**
+    * The current implementation uses regular expressions for basic data extraction from resumes. This approach can be fragile and may not work reliably with all resume formats.
+    * **Future Development:** More robust methods, such as dedicated resume parsing libraries (e.g., resume-parser, tika-python) or cloud-based resume parsing services, could be employed to improve accuracy and handle a wider variety of resume layouts.  Ideally, the solution should be able to extract information such as work experience, education, skills, and projects.
+
+2.  **Cloud Deployment:**
+    * The guide provides instructions for local deployment, and while deployment via Streamlit Community Cloud was achieved, it not the ideal choice especially when considering scalability, reliability, and security.
+    * **Future Development:** Explore more robust cloud deployment options:
+        * **Containerization (Docker):** Containerizing the application with Docker would simplify deployment across different environments and ensure consistency.
+        * **Cloud Services:** Deploying the Docker container to a container orchestration service like Google Kubernetes Engine, Amazon Elastic Kubernetes Service, or Azure Kubernetes Service would provide scalability, high availability, and automated management.  Alternatively, serverless platforms like Google Cloud Functions, AWS Lambda, or Azure Functions could be used, though they may require refactoring the application.
+        * **Platform-as-a-Service (PaaS):** Services like Google App Engine, Heroku, or similar could streamline deployment, but might introduce vendor lock-in.
+
+3.  **Frontend Limitations:**
+    * Streamlit, while excellent for rapid prototyping, has some limitations in terms of frontend structure, customization and complex UI design.
+    * **Future Development:** Consider migrating to a more flexible frontend framework:
+        * **React/Angular/Vue.js:** Building a separate frontend using a framework like React, Angular, or Vue.js would allow for a more modern, interactive, and customizable user experience.  This would likely involve creating an API (e.g., using Flask or FastAPI) to handle communication between the frontend and the backend (LLM and data processing).
+        * **Enhanced Streamlit Components:** If Streamlit is retained, explore the use of custom Streamlit components or advanced layout options to overcome some of the framework's limitations.
+
