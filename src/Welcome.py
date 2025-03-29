@@ -12,8 +12,18 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
-st.markdown("## Miri")
-st.markdown("The Smart Hiring Assistant by 🔶TalentScout")
+
+st.title("Welcome, I'm Miri!")
+
+# st.markdown("""<p style="text-align:center;"><h1><b>Welcome! I'm Miri.</b></h1></p>""",
+#     unsafe_allow_html=True,
+# )
+
+st.markdown("""
+<p>The Smart Hiring Assistant by 🔶<b>TalentScout</b></p>
+""",
+    unsafe_allow_html=True,
+)
 
 # --- GDPR Disclaimer and Consent ---
 if "gdpr_consent" not in st.session_state:
@@ -30,7 +40,8 @@ if not st.session_state.gdpr_consent:
 
     For more information about GDPR, please refer to [https://gdpr.eu/](https://gdpr.eu/).
     """)
-    st.session_state.gdpr_consent = st.checkbox("I have read and agree to the terms.")
+    if st.button("I Agree"):
+        st.session_state.gdpr_consent = True
 
 if st.session_state.gdpr_consent:
-    st.switch_page("pages/1_Information_Form.py")
+    st.switch_page("pages/1_Chatbot.py")
