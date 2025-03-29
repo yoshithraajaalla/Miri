@@ -9,7 +9,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 from datetime import datetime, timezone
-import time
+import time  # Import the time module
 
 load_dotenv()
 
@@ -106,6 +106,17 @@ if st.session_state.information_collected:
     user_name = st.session_state.user_data.get("Full Name", "Candidate")
     desired_position = st.session_state.user_data.get("Desired Position(s)", "role")
     tech_stack = st.session_state.user_data.get("Tech Stack", "technologies")
+    years_of_experience = st.session_state.user_data.get("Years of Experience", 0)
+
+    # Determine difficulty level based on years of experience
+    if years_of_experience == 0:
+        difficulty_level = "Fresher"
+    elif 1<= years_of_experience <= 2:
+        difficulty_level = "Junior"
+    elif 3 <= years_of_experience <= 5:
+        difficulty_level = "Mid-Level"
+    else:
+        difficulty_level = "Senior"
 
     # --- Initialize Gemini LLM ---
     if "llm" not in st.session_state:
@@ -118,14 +129,14 @@ if st.session_state.information_collected:
             st.error(f"Error initializing Gemini LLM: {e}")
             st.stop()
 
-    def get_response(user_query, convo_history):
+    def get_response(user_query, convo_history, tech_stack, difficulty_level):
         template = """
-        You are Miri, an AI hiring assistant specialized in technical interviews.
+        You are Miri, an AI hiring assistant specialized in technical interviews for {difficulty_level} level candidates.
         Based on the following tech stack provided by the candidate:
         ```
         {tech_stack}
         ```
-        Generate exactly one technical question relevant to these technologies.
+        Generate exactly one technical question relevant to these technologies, appropriate for a {difficulty_level} level.
         If the candidate indicates they don't know the answer, briefly acknowledge and move to the next question.
         Do not ask more than a total of three questions.
         Maintain a professional and concise tone.
@@ -142,6 +153,7 @@ if st.session_state.information_collected:
                 "tech_stack": tech_stack,
                 "convo_history": convo_history,
                 "user_query": user_query,
+                "difficulty_level": difficulty_level
             })
         except Exception as e:
             st.error(f"Error generating response: {e}")
@@ -164,7 +176,7 @@ if st.session_state.information_collected:
             st.markdown(user_query)
         with st.chat_message("AI"):
             if st.session_state.question_number < 3:
-                response_stream = get_response(user_query, st.session_state.chat_history)
+                response_stream = get_response(user_query, st.session_state.chat_history, tech_stack, difficulty_level)
                 full_response = ""
                 response_container = st.empty()
                 for chunk in response_stream:
@@ -174,11 +186,11 @@ if st.session_state.information_collected:
                 st.session_state.question_number += 1
                 st.session_state.questions_asked.append(full_response)
             elif st.session_state.question_number == 3 and not st.session_state.redirected:
-                final_message = "Your responses have been recorded. We'll get back to you via email. You may close the tab now."
+                final_message = "Your responses have been recorded. Thank you!"
                 st.session_state.chat_history.append(AIMessage(content=final_message))
                 st.success(final_message)
                 st.session_state.redirected = True
-                time.sleep(2)
+                time.sleep(2)  # Add a 2-second delay
                 st.switch_page("pages/2_Thank_You.py")
 
 else:
