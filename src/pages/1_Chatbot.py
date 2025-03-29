@@ -9,7 +9,17 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 from datetime import datetime, timezone
-import time  # Import the time module
+import time
+import re  # For regular expressions
+
+# Libraries for resume parsing
+try:
+    from PyPDF2 import PdfReader
+    import docx
+    resume_parsing_enabled = True
+except ImportError:
+    resume_parsing_enabled = False
+    st.warning("Please install PyPDF2 and python-docx for resume parsing functionality.")
 
 load_dotenv()
 
@@ -29,6 +39,8 @@ if "question_number" not in st.session_state:
     st.session_state.question_number = 0
 if "questions_asked" not in st.session_state:
     st.session_state.questions_asked = []
+if "uploaded_file_data" not in st.session_state:
+    st.session_state.uploaded_file_data = None
 
 # App config
 st.set_page_config(page_title="TalentScout - Miri", page_icon="🔶",initial_sidebar_state="collapsed")
@@ -46,16 +58,62 @@ st.markdown(
 st.title("Welcome, I'm Miri!")
 st.markdown("Please enter your information to in the provided fields:")
 
+uploaded_file = st.file_uploader("Upload your resume (PDF or Word) to auto-fill the form", type=["pdf", "docx"], key="file_uploader")
+
+extracted_name = st.session_state.user_data.get("Full Name", "")
+extracted_email = st.session_state.user_data.get("Email Address", "")
+extracted_mobile = st.session_state.user_data.get("Mobile Number", "")
+
+if uploaded_file and resume_parsing_enabled:
+    st.session_state.uploaded_file_data = uploaded_file
+    file_type = uploaded_file.type
+    try:
+        text = ""
+        if file_type == "application/pdf":
+            pdf_reader = PdfReader(uploaded_file)
+            for page in pdf_reader.pages:
+                text += page.extract_text()
+        elif file_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            doc = docx.Document(uploaded_file)
+            for paragraph in doc.paragraphs:
+                text += paragraph.text + "\n"
+
+        if text:
+            name_match = re.search(r"([A-Z][a-z]+ [A-Z][a-z]+)", text)
+            if name_match and not st.session_state.user_data.get("Full Name"):
+                extracted_name = name_match.group(1)
+                st.session_state.user_data["Full Name"] = extracted_name
+
+            email_match = re.search(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", text)
+            if email_match and not st.session_state.user_data.get("Email Address"):
+                extracted_email = email_match.group(0)
+                st.session_state.user_data["Email Address"] = extracted_email
+
+            mobile_match = re.search(r"(\d{10})", ''.join(filter(str.isdigit, text)))
+            if mobile_match and not st.session_state.user_data.get("Mobile Number"):
+                extracted_mobile = mobile_match.group(1)
+                if len(extracted_mobile) == 10:
+                    st.session_state.user_data["Mobile Number"] = extracted_mobile
+                else:
+                    st.warning("Could not extract a valid 10-digit mobile number from the resume.")
+                    extracted_mobile = "" # Clear if not a 10-digit number
+
+            st.success("Resume uploaded and basic data extracted!")
+            # Removed st.rerun()
+
+    except Exception as e:
+        st.error(f"Error processing the uploaded file: {e}")
+
 with st.form("user_info_form"):
     col1, col2 = st.columns(2)
-    full_name = col1.text_input("Full Name")
-    email = col2.text_input("E-mail")
+    full_name = col1.text_input("Full Name", value=st.session_state.user_data.get("Full Name", ""))
+    email = col2.text_input("E-mail", value=st.session_state.user_data.get("Email Address", ""))
     country_code = col1.text_input("Country Code", value = "+91")
-    mobile_number = col2.text_input("Mobile Number")
-    years_exp = col1.number_input("Year(s) of Experience", min_value=0, step=1)
-    desired_positions = col2.text_input("Desired Postion(s)")
-    current_location = st.text_input("Current Location")
-    tech_stack = st.text_area("Enter the Tech Stack you have experience with (Programming Languages, Frameworks etc)")
+    mobile_number = col2.text_input("Mobile Number", value=st.session_state.user_data.get("Mobile Number", ""))
+    years_exp = col1.number_input("Year(s) of Experience", min_value=0, step=1, value=st.session_state.user_data.get("Years of Experience", 0))
+    desired_positions = col2.text_input("Desired Postion(s)", value=st.session_state.user_data.get("Desired Position(s)", ""))
+    current_location = st.text_input("Current Location", value=st.session_state.user_data.get("Current Location", ""))
+    tech_stack = st.text_area("Enter the Tech Stack you have experience with (Programming Languages, Frameworks etc)", value=st.session_state.user_data.get("Tech Stack", ""))
 
     submit_button = st.form_submit_button("Submit Information", disabled=st.session_state.form_submitted)
 
@@ -83,16 +141,14 @@ with st.form("user_info_form"):
                     st.error(error)
                 st.session_state.form_submitted = False # Re-enable if there are errors
             else:
-                st.session_state.user_data = {
-                    "Full Name": full_name,
-                    "Email Address": email,
-                    "Country Code": country_code,
-                    "Mobile Number": mobile_number,
-                    "Years of Experience": years_exp,
-                    "Desired Position(s)": desired_positions,
-                    "Current Location": current_location,
-                    "Tech Stack": tech_stack,
-                }
+                st.session_state.user_data["Full Name"] = full_name
+                st.session_state.user_data["Email Address"] = email
+                st.session_state.user_data["Country Code"] = country_code
+                st.session_state.user_data["Mobile Number"] = mobile_number
+                st.session_state.user_data["Years of Experience"] = years_exp
+                st.session_state.user_data["Desired Position(s)"] = desired_positions
+                st.session_state.user_data["Current Location"] = current_location
+                st.session_state.user_data["Tech Stack"] = tech_stack
                 st.session_state.information_collected = True
                 st.success("Information submitted successfully! Starting chat...")
                 user_name = st.session_state.user_data.get("Full Name", "Candidate")
@@ -100,7 +156,6 @@ with st.form("user_info_form"):
                 tech_stack = st.session_state.user_data.get("Tech Stack", "technologies")
                 initial_message = f"Hi {user_name}! I see you're interested in the {desired_position} role and have experience with {tech_stack}. Let's dive into some technical questions based on your tech stack. Are you ready?"
                 st.session_state.chat_history.append(AIMessage(content=initial_message))
-                st.rerun()
 
 if st.session_state.information_collected:
     user_name = st.session_state.user_data.get("Full Name", "Candidate")
@@ -111,7 +166,7 @@ if st.session_state.information_collected:
     # Determine difficulty level based on years of experience
     if years_of_experience == 0:
         difficulty_level = "Fresher"
-    elif 1<= years_of_experience <= 2:
+    elif 1 <= years_of_experience <= 2:
         difficulty_level = "Junior"
     elif 3 <= years_of_experience <= 5:
         difficulty_level = "Mid-Level"
@@ -186,11 +241,14 @@ if st.session_state.information_collected:
                 st.session_state.question_number += 1
                 st.session_state.questions_asked.append(full_response)
             elif st.session_state.question_number == 3 and not st.session_state.redirected:
-                final_message = "Your responses have been recorded. Thank you!"
+                final_message = "Your responses have been recorded. We'll get back to you via email. You may close the tab now."
                 st.session_state.chat_history.append(AIMessage(content=final_message))
                 st.success(final_message)
                 st.session_state.redirected = True
                 time.sleep(2)  # Add a 2-second delay
+                # Delete the uploaded file data from session state
+                if "uploaded_file_data" in st.session_state:
+                    del st.session_state.uploaded_file_data
                 st.switch_page("pages/2_Thank_You.py")
 
 else:

@@ -8,6 +8,7 @@ certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6
+dnspython==2.7.0
 filetype==1.2.0
 gitdb==4.0.12
 GitPython==3.1.44
@@ -35,6 +36,7 @@ langchain-core==0.3.49
 langchain-google-genai==2.1.2
 langchain-text-splitters==0.3.7
 langsmith==0.3.19
+lxml==5.3.1
 MarkupSafe==3.0.2
 narwhals==1.32.0
 numpy==2.2.4
@@ -50,8 +52,11 @@ pyasn1_modules==0.4.1
 pydantic==2.11.0
 pydantic_core==2.33.0
 pydeck==0.9.1
+pymongo==4.11.3
 pyparsing==3.2.3
+PyPDF2==3.0.1
 python-dateutil==2.9.0.post0
+python-docx==1.1.2
 python-dotenv==1.1.0
 pytz==2025.2
 PyYAML==6.0.2
