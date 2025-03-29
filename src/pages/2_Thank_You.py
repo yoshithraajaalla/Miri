@@ -15,7 +15,9 @@ st.markdown(
 
 st.balloons()
 
-st.markdown("""<h1><p style="text-align:center;"><b>THANK YOU!</b></p></h1>""",
+full_name = st.session_state.user_data.get("Full Name", "Candidate")
+
+st.markdown(f"""<h1><p style="text-align:center;"><b>THANK YOU, {full_name.upper()}!</b></p></h1>""",
     unsafe_allow_html=True,
 )
 
