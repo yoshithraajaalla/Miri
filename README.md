@@ -43,13 +43,11 @@ To set up and run the Hiring Assistant chatbot locally, follow these steps:
     pip install streamlit langchain-google-genai python-dotenv PyPDF2 python-docx pandas
     ```
 
-    *Ensure you have PyPDF2 and python-docx installed for resume parsing. If you encounter issues, refer to their installation documentation. If you do not wish to use this feature, you can omit them from the install command.* *(pandas is added because it is a dependency for streamlit)*
-
 5.  **Set up the Google API Key:**
 
     * Obtain a Google API key for the Gemini API. See <https://ai.google.dev/> for instructions.
 
-    * Create a `secrets.toml` file in the root directory of the project.
+    * Create a `secrets.toml` file at `~/.streamlit/secrets.toml` for macOS/Linux or `%userprofile%/.streamlit/secrets.toml` for Windows:
 
     * Add your API key to the `secrets.toml` file:
 
