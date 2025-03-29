@@ -1,20 +1,9 @@
 import streamlit as st
 
-# App config
+# App Config
 st.set_page_config(page_title="TalentScout - Miri", page_icon="🔶",initial_sidebar_state="collapsed")
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
+st.markdown("""<style> [data-testid="collapsedControl"] { display: none } </style>""", unsafe_allow_html=True,)
 st.title("Welcome, I'm Miri!")
-
 # st.markdown("""<p style="text-align:center;"><h1><b>Welcome! I'm Miri.</b></h1></p>""",
 #     unsafe_allow_html=True,
 # )
@@ -25,7 +14,7 @@ st.markdown("""
     unsafe_allow_html=True,
 )
 
-# --- GDPR Disclaimer and Consent ---
+# GDPR Disclaimer and Consent
 if "gdpr_consent" not in st.session_state:
     st.session_state.gdpr_consent = False
 
