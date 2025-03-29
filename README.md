@@ -11,11 +11,9 @@ To set up and run the Hiring Assistant chatbot locally, follow these steps:
 1.  **Clone the repository:**
 
     ```bash
-    git clone <repository_url>
-    cd <repository_name>
+    git clone https://github.com/yoshithraajaalla/Miri.git
+    cd Miri
     ```
-
-    *Replace `<repository_url>` with the actual URL of your repository and `<repository_name>` with the name of the directory.*
 
 2.  **Create a virtual environment (recommended):**
 
@@ -62,7 +60,7 @@ To set up and run the Hiring Assistant chatbot locally, follow these steps:
 6.  **Run the Streamlit application:**
 
     ```bash
-    streamlit run Welcome.py
+    streamlit run src/Welcome.py
     ```
 
 7.  **Access the application:**
@@ -219,18 +217,18 @@ The prompts used in this application are crucial for guiding the LLM to generate
 
 ## 6. Challenges & Solutions
 
-* **Challenge:** Ensuring the LLM generates relevant and appropriate technical questions.
+* **Challenge 1:** Ensuring the LLM generates relevant and appropriate technical questions.
 
     * **Solution:** Detailed prompt engineering, including providing the candidate's tech stack, experience level, and conversation history, helps the LLM to stay focused and generate better questions. Iterative testing and refinement of the prompt were crucial.
 
-* **Challenge:** Handling user input variations and potential errors.
+* **Challenge 2:** Handling user input variations and potential errors.
 
     * **Solution:** Input validation in the Streamlit form ensures that required information is provided in the correct format. The prompt also instructs the LLM on how to handle cases where the candidate doesn't know the answer.
 
-* **Challenge:** Maintaining conversation context.
+* **Challenge 3:** Maintaining conversation context.
 
     * **Solution:** Storing the chat history in `st.session_state` and including it in the prompt allows the LLM to refer to previous interactions and maintain a coherent conversation flow.
 
-* **Challenge:** Extracting information from resumes with varying formats.
+* **Challenge 4:** Extracting information from resumes with varying formats.
 
     * **Solution:** Used both PyPDF2 and docx to handle common resume formats. Regular expressions were used to extract name, email, and phone number. The extraction logic handles cases where some information might be missing from the resume.
