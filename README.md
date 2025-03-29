@@ -1,5 +1,4 @@
-# Miri
-#### Hiring Assistant Chatbot
+# Miri - Hiring Assistant Chatbot
 
 ## 1. Project Overview
 
